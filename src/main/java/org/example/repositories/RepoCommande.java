@@ -13,16 +13,25 @@ public class RepoCommande {
         Connection connection = AccessBD.connexionDB();
          if(connection!=null){
             String sql="INSERT INTO commande (etat , date , idCL)  VALUES(?,?,?)";
-             PreparedStatement st = null;
-             try {
-                 st = connection.prepareStatement(sql);
-                 st.setString(1 ,commande.getEtat());
-                 st.setDate(2 , commande.getDate());
-                 st.setInt(3 ,commande.getIdClient());
-                 st.executeUpdate();
-                 connection.close();
+             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                 preparedStatement.setString(1 ,commande.getEtat());
+                 preparedStatement.setDate(2 , commande.getDate());
+                 preparedStatement.setInt(3 ,commande.getIdClient());
+                 preparedStatement.executeUpdate();
+                 connection.commit();
              } catch (SQLException e) {
+                 try {
+                     connection.rollback();
+                 } catch (SQLException ex) {
+                     throw new RuntimeException(ex);
+                 }
                  throw new RuntimeException(e);
+             } finally {
+                 try {
+                     connection.close();
+                 } catch (SQLException e) {
+                     throw new RuntimeException(e);
+                 }
              }
          }
          else{
@@ -35,15 +44,24 @@ public class RepoCommande {
         Connection cn =AccessBD.connexionDB();
         if(cn!=null){
          String sql = "UPDATE commande SET etat=? WHERE idCommande=?";
-            PreparedStatement stUpdate = null;
-            try {
-                stUpdate = cn.prepareStatement(sql);
-                stUpdate.setString(1 , etat);
-                stUpdate.setInt(2 , idCommande);
-                stUpdate.executeUpdate();
-                cn.close();
+            try (PreparedStatement preparedStatement = cn.prepareStatement(sql)) {
+                preparedStatement.setString(1 , etat);
+                preparedStatement.setInt(2 , idCommande);
+                preparedStatement.executeUpdate();
+                cn.commit();
             } catch (SQLException e) {
+                try {
+                    cn.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 throw new RuntimeException(e);
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -51,13 +69,23 @@ public class RepoCommande {
         Connection cn =AccessBD.connexionDB();
         if(cn!=null){
             String sql="DELETE FROM commande WHERE idCommande=?";
-            PreparedStatement stmt = null;
-            try {
-                stmt = cn.prepareStatement(sql);
+            try (PreparedStatement stmt = cn.prepareStatement(sql)){
                 stmt.setInt(1 , idCommande);
-                cn.close();
+                stmt.executeUpdate() ;
+                cn.commit();
             } catch (SQLException e) {
+                try {
+                    cn.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 throw new RuntimeException(e);
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -113,16 +141,25 @@ public class RepoCommande {
         Connection connection = AccessBD.connexionDB();
         if(connection!=null){
             String sql="INSERT INTO ProduiCommande (idC , qte , idP)  VALUES(?,?,?)";
-            PreparedStatement st = null;
-            try {
-                st = connection.prepareStatement(sql);
-                st.setInt(1 , idCommande);
-                st.setInt(2 , qte);
-                st.setInt(3 ,idP);
-                st.executeUpdate();
-                connection.close();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+                preparedStatement.setInt(1 , idCommande);
+                preparedStatement.setInt(2 , qte);
+                preparedStatement.setInt(3 ,idP);
+                preparedStatement.executeUpdate();
+                connection.commit();
             } catch (SQLException e) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 throw new RuntimeException(e);
+            } finally {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         else{
@@ -133,15 +170,24 @@ public class RepoCommande {
         Connection cn =AccessBD.connexionDB();
         if(cn!=null){
             String sql="DELETE FROM ProduiCommande WHERE idC=? and idP=? ";
-            PreparedStatement stmt = null;
-            try {
-                stmt = cn.prepareStatement(sql);
-                stmt.setInt(1 , idCommande);
-                stmt.setInt(2 , idProduit);
-                stmt.executeUpdate() ;
-                cn.close();
+            try (PreparedStatement preparedStatement = cn.prepareStatement(sql)) {
+                preparedStatement.setInt(1 , idCommande);
+                preparedStatement.setInt(2 , idProduit);
+                preparedStatement.executeUpdate() ;
+                cn.commit();
             } catch (SQLException e) {
+                try {
+                    cn.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 throw new RuntimeException(e);
+            } finally {
+                try {
+                    cn.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

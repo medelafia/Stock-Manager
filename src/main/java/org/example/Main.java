@@ -1,15 +1,7 @@
 package org.example;
-
-import org.example.services.ServicesClients;
-import org.example.services.ServicesCommandes;
-import org.example.services.ServicesFournisseur;
-import org.example.services.ServicesProduit;
-
-import java.io.IOException;
+import org.example.services.*;
 import java.util.Scanner;
-
 public class Main {
-
     public static void menu() {
         System.out.flush();
         System.out.println("----------------------Menu----------------------");
@@ -41,6 +33,8 @@ public class Main {
         ServicesClients servicesClients = new ServicesClients() ;
         ServicesCommandes servicesCommandes = new ServicesCommandes() ;
         ServicesFournisseur servicesFournisseur = new ServicesFournisseur() ;
+        ServiceLogin serviceLogin = new ServiceLogin() ;
+        serviceLogin.Login();
         while(true) {
             System.out.flush();
             menu();
@@ -49,7 +43,8 @@ public class Main {
                 case 1 : while (true) {
                         boolean stop = false ;
                         services();
-                        System.out.println("5.........................exit");
+                        System.out.println("5......................exporter");
+                        System.out.println("6.........................exit");
                         System.out.flush();
                         switch (scanner.nextInt()) {
                             case 1 : servicesProduit.ajouterProduit();
@@ -60,7 +55,9 @@ public class Main {
                                 break;
                             case 4 : servicesProduit.modifierProduit();
                                 break;
-                            case 5 :
+                            case 5 : servicesProduit.exporterProduits();
+                                break;
+                            case 6 :
                                 stop = true ;
                                 break;
                         }
@@ -72,7 +69,8 @@ public class Main {
                     while (true) {
                         boolean stop = false ;
                         services();
-                        System.out.println("5.........................exit");
+                        System.out.println("5.......................exporter");
+                        System.out.println("6.........................exit");
                         System.out.flush();
                         switch (scanner.nextInt()) {
                             case 1 : servicesClients.ajouterClient();
@@ -83,7 +81,9 @@ public class Main {
                                 break;
                             case 4 : servicesClients.modifierClient();
                                 break;
-                            case 5 : stop = true ;
+                            case 5 : servicesClients.exporterClients();
+                                    break;
+                            case 6 : stop = true ;
                                 break ;
                         }
                         if(stop) break;
@@ -94,7 +94,8 @@ public class Main {
                     while (true) {
                         boolean stop = false ;
                         services();
-                        System.out.println("5.........................exit");
+                        System.out.println("5.......................exporter");
+                        System.out.println("6.........................exit");
                         System.out.flush();
                         switch (scanner.nextInt()) {
                             case 1 : servicesFournisseur.ajouterFournisseur();
@@ -105,7 +106,9 @@ public class Main {
                                 break;
                             case 4 : servicesFournisseur.modifierFournisseur();
                                 break;
-                            case 5 : stop = true ;
+                            case 5 : servicesFournisseur.exporterFournisseurs();
+                                break ;
+                            case 6 : stop = true ;
                                 break ;
                         }
                         if(stop) break;
@@ -118,7 +121,9 @@ public class Main {
                         services();
                         System.out.println("5...............list de produits d'un commande");
                         System.out.println("6....................supprimer un produit dans commande");
-                        System.out.println("7.......................exit");
+                        System.out.println("7.......................exporter");
+                        System.out.println("8.......................importer commandes");
+                        System.out.println("9.......................exit");
                         System.out.flush();
                         switch (scanner.nextInt()) {
                             case 1 : servicesCommandes.passerCommande();
@@ -134,7 +139,11 @@ public class Main {
                                 break;
                             case 6 :  servicesCommandes.supprimerProduitDeCommande();
                                 break;
-                            case 7: stop = true ;
+                            case 7 : servicesCommandes.exporterCommandes();
+                                break ;
+                            case 8 : servicesCommandes.importerCommandes();
+                                break;
+                            case 9: stop = true ;
                                 break;
                         }
                         if(stop) break;

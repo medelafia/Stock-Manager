@@ -1,0 +1,5 @@
+1		fournisseur1		02739393020		adresse_1_
+2		fournisseur2		0973937973973		adresse_2
+3		fournisseur1		adresse1		02739393020
+4		fournisseur2		adresse2		0973937973973
+5		fournisseur1		adresse		02739393020

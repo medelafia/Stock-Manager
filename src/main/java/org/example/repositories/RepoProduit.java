@@ -18,31 +18,50 @@ public class RepoProduit {
     public void ajouteProduit(Produit produit) {
         Connection connection = AccessBD.connexionDB();
         String sql="INSERT INTO produit (nom, description, prix, qte , idF)  VALUES(?,?,?,?,?)";
-        PreparedStatement st= null;
-        try {
-            st = connection.prepareStatement(sql);
-            st.setString(1,produit.getNom());
-            st.setString(2, produit.getDescription());
-            st.setFloat(3,produit.getPrix());
-            st.setInt(4,produit.getQte());
-            st.setInt(5, produit.getIdFournisseur());
-            st.executeUpdate();
-            connection.close();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1,produit.getNom());
+            preparedStatement.setString(2, produit.getDescription());
+            preparedStatement.setFloat(3,produit.getPrix());
+            preparedStatement.setInt(4,produit.getQte());
+            preparedStatement.setInt(5, produit.getIdFournisseur());
+            preparedStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
             throw new RuntimeException(e);
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
     public void supprimerProduit(int idProduit) {
         Connection connection = AccessBD.connexionDB() ;
         if( connection != null ) {
             String sql = "DELETE FROM PRODUIT WHERE idProduit=?" ;
-            try {
-                PreparedStatement preparedStatement = connection.prepareStatement(sql) ;
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){
                 preparedStatement.setInt(1 , idProduit);
                 preparedStatement.executeUpdate() ;
-                connection.close();
+                connection.commit();
             } catch (SQLException e) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 throw new RuntimeException(e);
+            } finally {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -76,8 +95,7 @@ public class RepoProduit {
         Connection connection = AccessBD.connexionDB() ;
         if(connection!=null){
             String sql = "UPDATE PRODUIT SET nom=? , description=? , prix=? , qte=?,  idF=? WHERE idProduit=? ";
-            try {
-                PreparedStatement preparedStatement = connection.prepareStatement(sql) ;
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){
                 preparedStatement.setString(1 , produit.getNom());
                 preparedStatement.setString(2 , produit.getDescription());
                 preparedStatement.setFloat(3 , produit.getPrix());
@@ -85,9 +103,20 @@ public class RepoProduit {
                 preparedStatement.setInt(5 , produit.getIdFournisseur());
                 preparedStatement.setInt(6 , produit.getIdP() );
                 preparedStatement.executeUpdate() ;
-                connection.close();
+                connection.commit();
             } catch (SQLException e) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 throw new RuntimeException(e);
+            } finally {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

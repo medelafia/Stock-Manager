@@ -20,16 +20,25 @@ public class RepoFournisseur {
         if(connection!=null){
 
             String sql="INSERT INTO FOURNISSEUR (nom,tel, adresse)  VALUES(?,?,?)";
-            PreparedStatement st = null;
-            try {
-                st = connection.prepareStatement(sql);
-                st.setString(1 , fournisseur.getNom() );
-                st.setString(2 , fournisseur.getTel());
-                st.setString(3 , fournisseur.getAddresse());
-                st.executeUpdate();
-                connection.close();
+            try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1 , fournisseur.getNom() );
+                preparedStatement.setString(2 , fournisseur.getTel());
+                preparedStatement.setString(3 , fournisseur.getAddresse());
+                preparedStatement.executeUpdate();
+                connection.commit();
             } catch (SQLException e) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 throw new RuntimeException(e);
+            } finally {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 
@@ -39,16 +48,26 @@ public class RepoFournisseur {
         Connection connection = AccessBD.connexionDB() ;
         if(connection!=null){
          String sql = "UPDATE fournisseur SET nom=?, tel=?,adresse=? WHERE idFournisseur=? ";
-            try {
-                PreparedStatement preparedStatement = connection.prepareStatement(sql) ;
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){
                 preparedStatement.setString(1 , fournisseur.getNom());
                 preparedStatement.setString(2 , fournisseur.getTel());
                 preparedStatement.setString(3 , fournisseur.getAddresse());
                 preparedStatement.setInt(4 ,fournisseur.getIdFournisseur());
                 preparedStatement.executeUpdate() ;
-                connection.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+                connection.commit();
+            } catch (SQLException e){
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                e.printStackTrace();
+            } finally {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -56,14 +75,23 @@ public class RepoFournisseur {
         Connection connection =AccessBD.connexionDB();
         if(connection!=null){
             String sql="DELETE FROM fournisseur WHERE idFournisseur=?";
-            PreparedStatement preparedStatement = null;
-            try {
-                preparedStatement = connection.prepareStatement(sql);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, idFournisseur);
                 preparedStatement.executeUpdate();
-                connection.close();
+                connection.commit();
             } catch (SQLException e) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 throw new RuntimeException(e);
+            }finally {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

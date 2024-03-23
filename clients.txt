@@ -1,0 +1,9 @@
+1		client1		prenom_client1		emailClient@gmail.com		0923983		adresse_1
+2		client2		prenomClient		emailClient2@gmail.com		0973933082		adresse_2
+4		el_afia_		mohamed		mohamedelafia@29072003		0658045721		martil
+5		client1		prenom_client1		emailClient@gmail.com		0923983		adresse
+6		client1		prenom_client1		emailClient@gmail.com		0923983		"adresse
+7		client1		prenom_client1		emailClient@gmail.com		0923983		adresse1
+8		client2		prenomClient		emailClient2@gmail.com		0973933082		adresse2
+9		client1		prenom_client1		emailClient@gmail.com		0923983		adresse_1
+10		client2		prenomClient		emailClient2@gmail.com		0973933082		adresse_2

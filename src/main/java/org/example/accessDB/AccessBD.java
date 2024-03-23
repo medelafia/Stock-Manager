@@ -13,6 +13,7 @@ public class AccessBD {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conn = DriverManager.getConnection(String.format("%s://%s:%d/GESTIONSTOCK?useSSL=false",PROTOCOLE,HOST_NAME,PORT),USERNAME, PASSWORD);
+            conn.setAutoCommit(false);
             return conn;
         }
         catch(Exception e){
@@ -144,12 +145,31 @@ public class AccessBD {
             }
         }
     }
+    private static void creationTableUsers() {
+        Connection conn = AccessBD.connexionDB();
+        if( conn != null )  {
+            try{
+                Statement stmt = conn.createStatement();
+
+                String sql ="CREATE TABLE IF NOT EXISTS users"+
+                        "(idU INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"+
+                        "login VARCHAR(20) NOT NULL,"+
+                        "password VARCHAR(20) NOT NULL)" ;
+                stmt.executeUpdate(sql);
+                System.out.println("Table de Users crée avec succés...");
+            }
+            catch(SQLException e){
+                System.out.println( e);
+            }finally {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
     public static void main(String[] args) {
-        creationDB();
-        createTableClient();
-        createTableFournisseur();
-        creatTableProduit();
-        createTableCommande();
-        createTableProduiCommande();
+        creationTableUsers();
     }
 }

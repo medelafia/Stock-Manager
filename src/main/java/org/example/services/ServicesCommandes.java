@@ -3,10 +3,9 @@ import org.example.entities.Commande;
 import org.example.entities.Produit;
 import org.example.repositories.RepoCommande;
 import org.example.repositories.RepoProduit;
-
+import java.io.*;
 import java.sql.Date;
 import java.time.Clock;
-import java.time.Instant;
 import java.util.List;
 import java.util.Scanner;
 public class ServicesCommandes {
@@ -31,10 +30,10 @@ public class ServicesCommandes {
             System.out.println("| idC  |   Date   |  idClient    |  etat    |");
             System.out.println("|______|__________|______________|__________|");
             for (int i = 0; i < list.size(); i++) {
-                System.out.println("|" + list.get(i).getIdCommande() + "|"
-                        + list.get(i).getDate() + "|"
-                        + list.get(i).getIdClient() + "|"
-                        + list.get(i).getEtat()+ "|");
+                System.out.println("|\t" + list.get(i).getIdCommande() + "\t|\t"
+                        + list.get(i).getDate() + "\t|\t"
+                        + list.get(i).getIdClient() + "\t|\t"
+                        + list.get(i).getEtat()+ "\t|");
             }
         }else{
             System.out.println("la table des commandes est vide");
@@ -93,6 +92,7 @@ public class ServicesCommandes {
         System.out.println("entrer l'id de commande");
         int id = scanner.nextInt() ;
         System.out.println("entrer la nouvelle etat");
+        scanner.nextLine() ;
         String etat = scanner.nextLine() ;
         repoCommande.modifierEtatCommande(id , etat );
     }
@@ -118,5 +118,61 @@ public class ServicesCommandes {
         produit.setQte(produit.getQte() + repoCommande.getQteProduit(idProduit , idCommande ));
         repoProduit.modifierProduit(produit);
         repoCommande.supprimerProduitDeCommande(idCommande , idProduit);
+    }
+    public void exporterCommandes() {
+        File file = new File("commandes.txt") ;
+        try (Writer writer = new FileWriter(file)){
+            List<Commande> commandes = repoCommande.trouverToutesCommandes() ;
+            for(int i=0 ; i<commandes.size() ; i++) {
+                writer.write(commandes.get(i).getIdCommande()+"\t\t\t"+
+                        commandes.get(i).getDate()+"\t\t" +
+                        commandes.get(i).getIdClient() + "\t\t"+
+                        commandes.get(i).getEtat().replaceAll(" " , "_")+"\t\t");
+                List<Integer> listProduits = repoCommande.listProduitsCommande(i) ;
+                if( listProduits.size() == 0 ) writer.write("null");
+                else {
+                    for(int j = 0 ; j < listProduits.size() ; j++) {
+                        writer.write(listProduits.get(j)+":"+repoCommande.getQteProduit(listProduits.get(j),i)+",");
+                    }
+                }
+                writer.write("\n");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void importerCommandes() {
+        System.out.println("entrer le chemin du fichier texte");
+        String filePath = scanner.nextLine();
+        FileInputStream file = null;
+        try {
+            file = new FileInputStream(filePath);
+            Scanner s = new Scanner(file);
+            System.out.println("Liste des commandes a partir du fichier 'Commande.txt' \n");
+            System.out.print("ID|\t etat\t|\t date\t|idclient\t|\tles ids des produits\n");
+            System.out.println("---------------------------------------------------------------------------");
+            while (s.hasNextLine() && s.hasNext()) {
+                int sid = Integer.parseInt(s.next());
+                Date sdate = Date.valueOf(s.next());
+                int sidcl = s.nextInt();
+                String setat = s.next();
+                String idsProduits = s.next() ;
+                System.out.print(" " + sid + "|\t");
+                System.out.print(setat + "\t|\t");
+                System.out.print(sdate + "\t|");
+                System.out.print(sidcl +"\t|");
+                System.out.print(idsProduits);
+                repoCommande.ajouteCommande(new Commande(sdate,sidcl ,setat.replaceAll("_" ," ")));
+                if(!idsProduits.equals("null")) {
+                    String[] ids = idsProduits.split(",") ;
+                    for(int i =0 ; i<ids.length ; i++) {
+                        repoCommande.ajouterProduitACommande(Integer.parseInt(ids[i].split(":")[0]), Integer.parseInt(ids[i].split(":")[1]) , sid ) ;
+                    }
+                }
+            }
+            s.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("le fichier n'existe pas");
+        }
     }
 }
