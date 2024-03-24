@@ -1,10 +1,8 @@
 package org.example.services;
 
-import org.example.entities.Client;
 import org.example.entities.Produit;
 import org.example.repositories.RepoProduit;
 import java.io.*;
-import java.net.URI;
 import java.util.List;
 import java.util.Scanner;
 

@@ -40,7 +40,7 @@ public class RepoClient{
     public void modifier_client(Client client){
         Connection cn =AccessBD.connexionDB();
         if(cn!=null){
-            String sql = "UPDATE client SET nom='"+client.getNom()+"', prenom='"+client.getPrenom()+"',email='"+client.getEmail()+"', tel='"+client.getTel()+"' ,addresse='"+client.getAddresse()+"'WHERE idClient='"+ client.getIdClient()+"' ";
+            String sql = "UPDATE client SET nom='"+client.getNom()+"', prenom='"+client.getPrenom()+"',email='"+client.getEmail()+"', tel='"+client.getTel()+"' ,adresse='"+client.getAddresse()+"'WHERE idClient='"+ client.getIdClient()+"' ";
             Statement stUpdate = null;
             try {
                 stUpdate = cn.createStatement();

@@ -48,7 +48,7 @@ public class AccessBD {
                         "qte INTEGER ,"+
                         "idF INTEGER , " +
                         "PRIMARY KEY (idProduit),"+
-                        "FOREIGN KEY (idF)REFERENCES FOURNISSEUR(idFournisseur))";
+                        "FOREIGN KEY (idF)REFERENCES FOURNISSEUR(idFournisseur) ON DELETE CASCADE)";
                 stmt.executeUpdate(sql);
                 System.out.println("Table de produit crée avec succés...");
                 conn.close();
@@ -114,7 +114,7 @@ public class AccessBD {
                         "date DATE,"+
                         "idCl INTEGER ,"+
                         "PRIMARY KEY (idCommande)," +
-                        "FOREIGN KEY (idCl)REFERENCES CLIENT(idClient))";
+                        "FOREIGN KEY (idCl)REFERENCES CLIENT(idClient) ON DELETE CASCADE)";
                 stmt.executeUpdate(sql);
                 System.out.println("Table de Commande crée avec succés...");
                 conn.close();
@@ -134,8 +134,8 @@ public class AccessBD {
                         "(idC INTEGER NOT NULL ,"+
                         "idP INTEGER NOT NULL ,"+
                         "qte INTEGER NOT NULL ,"+
-                        " FOREIGN KEY (idC) REFERENCES COMMANDE(idCommande),"+
-                        " FOREIGN KEY (idP) REFERENCES PRODUIT(idProduit) )";
+                        " FOREIGN KEY (idC) REFERENCES COMMANDE(idCommande) ON DELETE CASCADE,"+
+                        " FOREIGN KEY (idP) REFERENCES PRODUIT(idProduit) ON DELETE CASCADE)";
                 stmt.executeUpdate(sql);
                 System.out.println("Table de PrduitCommande crée avec succés...");
                 conn.close();
@@ -170,6 +170,9 @@ public class AccessBD {
         }
     }
     public static void main(String[] args) {
-        creationTableUsers();
+        createTableFournisseur();
+        creatTableProduit();
+        createTableCommande();
+        createTableProduiCommande();
     }
 }
